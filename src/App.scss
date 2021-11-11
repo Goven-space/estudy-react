@@ -1,0 +1,39 @@
+.header {
+  color: white;
+  font-size: 1.1em;
+  h2,
+  h3,
+  h4 {
+    color: white;
+  }
+  .right > .flexrow > * {
+    margin-right: 25px;
+  }
+  .label {
+    padding: 0 5px;
+  }
+}
+.flexrow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  height: 100%;
+}
+.right {
+  margin-left: auto;
+}
+.flexcol {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-evenly; 
+  height: 100%;
+  span {
+    flex: 1;
+    max-height: 20px;
+    line-height: 20px;
+  }
+}
+.vcenter {
+  align-self: center; //弹性盒子的居中属性
+}
