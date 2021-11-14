@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../styles/component/teacher/header.scss'
+import '@/styles/component/teacher/header.scss'
 
 
 export default function teacherHeader(){

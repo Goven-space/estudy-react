@@ -15,9 +15,12 @@ module.exports = {
         config: {
           resolve: {
             alias: {
-              '@': path.resolve(__dirname, './src')
+              map:[
+                ['@',path.resolve(__dirname, './src')]
+              ]
+              
             },
-            extensions: ['.js', '.jsx', '.ts', '.tsx'],
+            extensions: ['.js', '.jsx', '.ts', '.tsx','.scss'],
           },
         }
       }
