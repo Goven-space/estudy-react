@@ -20,7 +20,7 @@ module.exports = {
               ]
               
             },
-            extensions: ['.js', '.jsx', '.ts', '.tsx','.scss'],
+            extensions: ['.js', '.jsx', '.ts', '.tsx'],
           },
         }
       }

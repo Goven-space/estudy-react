@@ -1,3 +1,15 @@
-span{
-    color:red;
-}
+.header {
+    color: white;
+    font-size: 1.1em;
+    h2,
+    h3,
+    h4 {
+      color: white;
+    }
+    .right > .flexrow > * {
+      margin-right: 25px;
+    }
+    .label {
+      padding: 0 5px;
+    }
+  }

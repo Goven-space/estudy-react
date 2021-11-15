@@ -1,8 +1,8 @@
-import './styles/App.scss';
 import { Layout } from 'antd';
-import { Route, Switch } from "react-router-dom";
-import TeacherHeader from "./components/teacher/header"
-import StudentHeader from "./components/student/header"
+import { Route, Switch } from 'react-router-dom';
+import TeacherHeader from './components/teacher/header';
+import StudentHeader from './components/student/header';
+import HeaderCommon from './components/common.jsx';
 
 
 
@@ -13,22 +13,17 @@ function App() {
     <Layout className="App">
       <Header className="header flexrow">
         <h2>eStudy</h2>
-
         <div className="right flexrow" >
-          <Switch>
-            <Route path="/teacher" component={TeacherHeader}/>
-            <Route path="/student" component={StudentHeader}/>
-          </Switch>
-        
-        {/* <a class="vcenter" href="https://github.com/Goven-space" target="_blank">
-          <a-button icon="home">代码仓库</a-button>
-        </a>
-        <a-button class="vcenter" icon="logout" @click="$store.dispatch('user/logout')">退出</a-button> */}
-      </div>
-
+          <Route path="/teacher" component={TeacherHeader}/>
+          <Route path="/student" component={StudentHeader}/>
+          <Route path="/:limit" component={HeaderCommon}/>
+        </div>
       </Header>
-      <Content>Content</Content>
-      
+      <Content>
+        <Switch>
+          
+        </Switch>
+      </Content>  
     </Layout>
   );
 }

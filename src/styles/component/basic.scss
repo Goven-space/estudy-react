@@ -1,0 +1,9 @@
+.flexrow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  height: 100%;
+}
+.vcenter {
+  align-self: center; //弹性盒子的居中属性
+}
