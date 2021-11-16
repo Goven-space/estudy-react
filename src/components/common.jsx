@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import { HomeOutlined, LogoutOutlined } from '@ant-design/icons';
 
-export default function headerCommon() {
+export default function HeaderCommon() {
   return (
     <>
       <a className="vcenter" href="https://github.com/Goven-space" target="_blank">

@@ -1,0 +1,22 @@
+.authorization {
+  display: flex;
+  justify-content: center;
+}
+form {
+  width: 400px;
+}
+.filed {
+  margin: 20px;
+  button {
+    width: 100%;
+  }
+}
+.icon {
+  color: rgba(0, 0, 0, 0.25);
+}
+.error {
+  border: 1px solid red;
+}
+.error-tip {
+  color: red;
+}

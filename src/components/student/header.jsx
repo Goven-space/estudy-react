@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function studentHeader(){
+export default function StudentHeader(){
   return  (       
     <div>
       <h3 className="flexcol">

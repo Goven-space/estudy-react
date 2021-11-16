@@ -1,8 +1,9 @@
 import { Layout } from 'antd';
 import { Route, Switch } from 'react-router-dom';
-import TeacherHeader from './components/teacher/header';
-import StudentHeader from './components/student/header';
-import HeaderCommon from './components/common.jsx';
+import TeacherHeader from './components/teacher/Header';
+import StudentHeader from './components/student/Header';
+import HeaderCommon from './components/Common.jsx';
+import Authorization from './components/Authorization';
 
 
 
@@ -20,9 +21,7 @@ function App() {
         </div>
       </Header>
       <Content>
-        <Switch>
-          
-        </Switch>
+        <Authorization path="/" component={Authorization} />
       </Content>  
     </Layout>
   );

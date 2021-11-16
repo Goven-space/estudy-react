@@ -9,33 +9,16 @@ module.exports = {
       legacyDecorators: true,
     }
   },
-  settings: {
-    'import/resolver': {
-      webpack: {
-        config: {
-          resolve: {
-            alias: {
-              map:[
-                ['@',path.resolve(__dirname, './src')]
-              ]
-              
-            },
-            extensions: ['.js', '.jsx', '.ts', '.tsx'],
-          },
-        }
-      }
-    }
-  },
   env: {
     browser: true,
   },
   rules: {
-    "indent": ["error", 2],
-    "quotes": ["error", "single"],
-    "semi": ["error", "always"],
-    "no-console": 1,
-    "arrow-parens": 0,
-    "no-shadow": "off",
-    "react/jsx-filename-extension": "off"
+    'indent': ['error', 2],
+    'quotes': ['error', 'single'],
+    'semi': ['error', 'always'],
+    'no-console': 'off',
+    'arrow-parens': 0,
+    'no-shadow': 'off',
+    'react/jsx-filename-extension': 'off'
   }
-}
+};

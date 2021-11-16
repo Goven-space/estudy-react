@@ -4,7 +4,7 @@ import {FileAddOutlined} from '@ant-design/icons';
 
 
 
-export default function teacherHeader() {
+export default function TeacherHeader() {
   return (
     <div v-if="isTeacher" class="flexrow">
       <h3>
