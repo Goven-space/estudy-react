@@ -1,7 +1,11 @@
 import React from 'react';
 import {Form,Input,Button} from 'antd';
 import {UserOutlined,LockOutlined} from '@ant-design/icons';
+import {connect} from 'react-redux';
 
+@connect((state)=>{
+  return state.AuthorizationReducer
+})
 export default function Authorization() {
   const [form] = Form.useForm();
   const handleSubmit = (values) => {
