@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'antd';
+import { Button} from 'antd';
 import { HomeOutlined, LogoutOutlined } from '@ant-design/icons';
 
 export default function HeaderCommon() {

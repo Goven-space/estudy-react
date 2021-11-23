@@ -3,30 +3,49 @@ import {Form,Input,Button,message} from 'antd';
 import {UserOutlined,LockOutlined} from '@ant-design/icons';
 import {connect} from 'react-redux';
 import {login} from '@/actions/authorization';
+import {updateTeacher} from '@/actions/teacher';
 import propTypes from 'prop-types';
 import {api} from '@/utils/api';
 
+// 将redux绑定到组件的props上
 export default connect((state)=>{
-  return state.AuthorizationReducer;
+  return {
+    loggedIn:state.AuthorizationReducer.loggedIn,
+  };
 },(dispatch)=>{
   return {
-    login: (params)=>dispatch(login(params))
+    login: (params)=>dispatch(login(params)),
+    updateTeacher: (params) => dispatch(updateTeacher(params))
   };
 })(Authorization);
 
-function Authorization({login}) {
+// 组件Authorization
+function Authorization({login,updateTeacher}) {
+
   const [form] = Form.useForm();
+
+  // 登录表单提交事件放啊
   const handleSubmit = (values) => {
     api.post('/auth/login',values).then(result=>{
-      console.log(result);
       login(result);
+      api.defaults.headers.common['Token'] = result.token;
       message.success('登录成功');
+      return Promise.resolve(result.is_admin);
     }).catch(error=>{
-      console.log(error);
-      message.error('用户名或密码错误');
+      const errorMsg = error.response.data.msg;
+      message.error(errorMsg);
+    }).then((result)=>{
+      console.log(result);
+      if(result ===1){
+        api.get('/teacher/detail').then(data => {
+          updateTeacher(data);
+        });
+      }
     });
     ;
   };
+
+
   return (
     <div className="authorization">
       <Form 
@@ -74,6 +93,15 @@ function Authorization({login}) {
   );
 }
 
-Authorization.propTypes = {
 
+Authorization.propTypes = {
+  loggedIn:propTypes.bool,
+  login:propTypes.func,
+  updateTeacher:propTypes.func
+};
+
+Authorization.defaultProps = {
+  loggedIn:false,
+  login:() => null,
+  updateTeacher:() =>null
 };

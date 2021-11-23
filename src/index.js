@@ -3,15 +3,28 @@ import ReactDOM from 'react-dom';
 import './styles/index.scss';
 import 'antd/dist/antd.css';
 import App from './App';
+import {Provider} from 'react-redux';
+import store from './store';
+import moment from 'moment';
+
+// antd中文配置
+import zhCN from 'antd/lib/locale/zh_CN';
+import 'moment/locale/zh-cn';
+import {ConfigProvider} from 'antd';
 // import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
+
+moment.locale('zh-cn');
+// 中文
+
 
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <ConfigProvider locale={zhCN}>
+        <App key={zhCN}/>
+      </ConfigProvider>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

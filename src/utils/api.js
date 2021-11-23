@@ -10,7 +10,6 @@ api.defaults.headers.post['Content-Type'] = 'application/json';
 
 //设置返回信息拦截器
 api.interceptors.response.use(response => {
-  console.log(222);
   return response.data.data;
 },error => {
   const headers = error.config.headers;
@@ -18,7 +17,6 @@ api.interceptors.response.use(response => {
   if (! headers._slient) {
       
   };
-  console.log(123);
   return Promise.reject(error);
 
 });

@@ -1,16 +1,17 @@
 import * as types from '@/actions/mutation-types';
 const initialState = {
-  form:{
-    username:null,
-    password:null,
-  },
+  loggedIn:false,
+  info:{},
 };
 
 const mutations = {
   [types.LOGIN](state,action){
     return  {
-      ...state.form,
-      ...action.payload
+      loggedIn:true,
+      info:{
+        ...state.info,
+        ...action.payload
+      }
     };
   },
 };
