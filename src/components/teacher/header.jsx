@@ -1,22 +1,28 @@
 import React ,{useState } from 'react';
-import { Button , Modal ,Form ,Input ,Select ,DatePicker} from 'antd';
+import { Button , Modal ,Form ,Input ,Select ,DatePicker,message} from 'antd';
 import {FileAddOutlined} from '@ant-design/icons';
 import {connect} from 'react-redux';
+import {api} from '@/utils/api';
+import {addAssignment} from '@/actions/teacher';
+import propTypes from 'prop-types';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const formItemLayout = {
-  labelCol: { span: 6 },
+  labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
 
-function TeacherHeader({teacherOrgs}) {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+
+function TeacherHeader({teacherOrgs,full_name,addAssignment}) {
+  const [form] = Form.useForm();
+
+  const [isModalVisible, setIsModalVisible] = useState(false);//作业创建窗口开关
+  const [confirmLoading, setConfirmLoading] = React.useState(false);//异步延迟关闭创建窗口
   const showModal = () => {
     setIsModalVisible(true);
   };
-
   const handleOk = () => {
     setIsModalVisible(false);
   };
@@ -24,11 +30,27 @@ function TeacherHeader({teacherOrgs}) {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
+  //创建作业表单提交
+  const createAssignment = (values) => {
+    api.post('/teacher/createAssignment',
+      {org_id:values.org_id,
+        name:values.name,
+        start_time:values.time_range[0],
+        end_time:values.time_range[1]
+      }
+    ).then(data => {
+      addAssignment(data);
+      message.success('添加成功');
+      setIsModalVisible(false);
+    });
+  };
+  // ===================================
   return (
     <>
       <div className="flexrow">
         <h3>
-          <span>luwei</span>
+          <span>{full_name}</span>
         </h3>
         <Button
           className="vcenter"
@@ -39,18 +61,24 @@ function TeacherHeader({teacherOrgs}) {
           新建作业
         </Button>
       </div >
-      <Modal visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <Form>
+      {/* 创建作业对话框 */}
+      <Modal 
+        visible={isModalVisible}
+        onOk={handleOk} 
+        onCancel={handleCancel}
+        destroyOnClose="true"
+        confirmLoading={confirmLoading}
+        footer={false}
+      >
+        <Form 
+          form={form}
+          preserve={false}
+          onFinish={createAssignment}
+        >
           <Form.Item 
             name="org_id" 
             label="班级" 
             {...formItemLayout}
-            rules={[
-              {
-                required: true,
-                message: '必须选择班级',
-              }
-            ]}
           >
             <Select placeholder="请选择班级">
               {teacherOrgs.map((org,index) => {
@@ -60,27 +88,20 @@ function TeacherHeader({teacherOrgs}) {
           </Form.Item>
           <Form.Item 
             label="作业名称" 
+            name="name"
             {...formItemLayout}
-            rules={[
-              {
-                required: true,
-                message: '必须写上作业名称',
-              }
-            ]}
           >
             <Input placeholder="请输入作业名称" />
           </Form.Item>
           <Form.Item 
+            name="time_range"
             label="开始/结束时间"
-            label-col="{ span: 5 }"
-            rules={[
-              {
-                required: true,
-                message: '请选择在什么时间内完成该作业',
-              }
-            ]}
+            {...formItemLayout}
           >
             <RangePicker showTime format="YYYY-MM-DD" />
+          </Form.Item>
+          <Form.Item wrapperCol={{ span: 16, offset: 8 }}>
+            <Button type="primary" htmlType="submit">保存</Button>
           </Form.Item>
         </Form>
       </Modal>
@@ -88,10 +109,29 @@ function TeacherHeader({teacherOrgs}) {
   );
 };
 
+TeacherHeader.propTypes = {
+  teacherOrgs:propTypes.array,
+  addAssignment:propTypes.func,
+};
+
+TeacherHeader.defaultProps = {
+  teacherOrgs:[],
+  addAssignment: ()=>null
+};
+
+
+
 const mapStateToProps = (state) => {
   return {
-    teacherOrgs:state.TeacherReducer.teacherOrgs
+    teacherOrgs:state.TeacherReducer.teacherOrgs,
+    full_name:state.AuthorizationReducer.info.full_name,
   };
 };
 
-export default connect(mapStateToProps)(TeacherHeader);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addAssignment:(params) => dispatch(addAssignment(params),)
+  };
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(TeacherHeader);

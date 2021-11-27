@@ -26,3 +26,10 @@ export function removeAssignment(state){
     payload:state
   };
 };
+
+export function addAssignment(state){
+  return {
+    type : types.ADD_ASSIGNMENT,
+    payload:state
+  };
+};

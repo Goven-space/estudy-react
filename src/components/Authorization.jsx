@@ -35,7 +35,6 @@ function Authorization({login,updateTeacher}) {
       const errorMsg = error.response.data.msg;
       message.error(errorMsg);
     }).then((result)=>{
-      console.log(result);
       if(result ===1){
         api.get('/teacher/detail').then(data => {
           updateTeacher(data);

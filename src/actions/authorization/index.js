@@ -8,4 +8,15 @@ export function login(state){
   };
 };
 
+export function getToken(state){
+  return {
+    type:types.GET_TOKEN,
+    payload:state
+  };
+};
 
+export function logout(){
+  return {
+    type:types.LOGOUT
+  };
+};

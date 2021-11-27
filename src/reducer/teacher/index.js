@@ -8,7 +8,6 @@ const initialState = {
 
 const mutations = {
   [types.UPDATE_TEACHER](state,action){
-    console.log(action.payload);
     return {
       ...state,
       teacherAssignments:action.payload.assignments,
@@ -29,9 +28,24 @@ const mutations = {
   },
   [types.REMOVE_ASSIGNMENT](state,action){
     const index = state.teacherAssignments.findIndex(assignment => assignment.assignment_id == action.payload);
+    const newteacherAssignments = [...state.teacherAssignments];
+    newteacherAssignments.splice(index,1);
     return {
       ...state,
-      teacherAssignments: state.teacherAssignments.splice(index,1)
+      teacherAssignments:[...newteacherAssignments]
+    };
+  },
+  [types.ADD_ASSIGNMENT](state,action){
+    const org = state.teacherOrgs.find(org => org.id == action.payload.org_id);
+    action.payload.student_count = org.student_count;
+    return {
+      ...state,
+      teacherAssignments:[action.payload,...state.teacherAssignments]
+    };
+  },
+  [types.LOGOUT](state){
+    return {
+      ...initialState
     };
   },
 };

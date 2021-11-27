@@ -4,7 +4,8 @@ import './styles/index.scss';
 import 'antd/dist/antd.css';
 import App from './App';
 import {Provider} from 'react-redux';
-import store from './store';
+import configureStore from './store';
+import { PersistGate } from 'redux-persist/es/integration/react';
 import moment from 'moment';
 
 // antd中文配置
@@ -16,16 +17,16 @@ import {ConfigProvider} from 'antd';
 moment.locale('zh-cn');
 // 中文
 
-
+const { persistor, store } = configureStore();
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
+  <Provider store={store}>
+    <PersistGate persistor={persistor}>
       <ConfigProvider locale={zhCN}>
         <App key={zhCN}/>
       </ConfigProvider>
-    </Provider>
-  </React.StrictMode>,
+    </PersistGate>
+  </Provider>,
   document.getElementById('root')
 );
 
