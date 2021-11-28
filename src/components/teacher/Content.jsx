@@ -1,12 +1,20 @@
 import React ,{useState} from 'react';
-import { Table,Modal,Select,Form ,Button, Popconfirm, message} from 'antd';
+import { Table,Modal,Select,Form,Input,Button, Popconfirm, message,Upload} from 'antd';
 import {connect} from  'react-redux';
 import {openRevisingAssignment,closeRevisingAssignment,removeAssignment} from '@/actions/teacher';
 import {api} from '@/utils/api';
 import propTypes from 'prop-types';
-import {DownloadOutlined,PlusSquareOutlined,MinusSquareOutlined,FormOutlined} from '@ant-design/icons';
+import {DownloadOutlined,PlusSquareOutlined,MinusSquareOutlined,FormOutlined,UploadOutlined} from '@ant-design/icons';
 
 
+const {Option} = Select;
+const { TextArea } = Input;
+
+// 批改串口元素位置
+const checkAssiLayout = {
+  labelCol:{ span: 5 },
+  wrapperCol:{ span: 16 }
+};
 
 function TeacherContent(props){
   const {
@@ -16,28 +24,52 @@ function TeacherContent(props){
     closeRevisingAssignment
   } = props;
 
-  const {checkAssignment,setCheckAssignment} = useState(false);
+  console.log(teacherAssignments);
+  const [checkAssignment,setCheckAssignment] = useState([]);
 
+  const baseHost = 'http://www.goven-zone.xyz:80';
+  const downloadHost = baseHost + '/teacher/download';
+  const reviewHost = baseHost + '/teacher/review';
+
+  // 打开批改窗口
   const handleCheckAssignment = (record) => {
-    if(!!record){
-      setCheckAssignment(record);
-    }else{
-      setCheckAssignment(false)
-    }
+    setCheckAssignment(record);
+  };
+
+  // 关闭批改窗口
+  const handleCheckAssiCancel = () => {
+    setCheckAssignment([]);
+  };
     
+  // 提交批改信息
+  const submitCheckAssignment = (values) =>{
+    console.log(values);
+    const checkForm = {
+      id : checkAssignment.id,
+      review:values.review,
+      status:values.status
+    };
+    console.log(checkForm);
+    api.post(reviewHost,checkForm).then(data => {
+      console.log(data);
+      // Object.entries(data).forEach(item => this.$set(this.checkAssignment,item[0],item[1]));
+    }).finally(() => {
+      // checkAssignment = [];
+    });
   };
 
-  const downloadHost = 'http://www.goven-zone.xyz:80/teacher/download';
+  
+  
 
-  const work_status = {
-    '0' : '待批改',
-    '1' : '需完善',
-    '2' : '已完成'
-  };
+  const work_status = [
+    '待批改',
+    '需完善',
+    '已完成'
+  ];
 
   // 删除作业函数
   const delConfirm = (id) => {
-    const {removeAssignment} = this.props;
+    const {removeAssignment} = props;
     api.post('/teacher/deleteAssignment',{id}).then(() => {
       removeAssignment(id);
       message.success('删除成功');
@@ -78,7 +110,7 @@ function TeacherContent(props){
             record.work_count<1
               ?<Popconfirm 
                 title="确定删除该作业？"
-                onConfirm={()=>{this.delConfirm(record.assignment_id);}}
+                onConfirm={()=>{delConfirm(record.assignment_id);}}
                 okText="Yes"
                 cancelText="No">
                 <Button>删除</Button>
@@ -159,11 +191,47 @@ function TeacherContent(props){
           :null
       }
       <Modal
-        visible={!!checkAssignment}
+        visible={checkAssignment.length != 0}
+        footer={false}
+        onCancel={handleCheckAssiCancel}
+        destroyOnClose={true}
       >
-        <Form>
-          <Form.Item>
-
+        <Form onFinish={submitCheckAssignment}>
+          <Form.Item 
+            label='状态'
+            name='status'
+            {...checkAssiLayout}
+          >
+            <Select placeholder={work_status[checkAssignment.status]}>
+              {work_status.map((status,index) =>{
+                return (
+                  <Option 
+                    key={index}
+                    name="status"
+                  >
+                    { status }
+                  </Option>
+                );
+              })}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label='批改意见'
+            name='review'
+            {...checkAssiLayout}
+          >
+            <TextArea placeholder={checkAssignment.teacher_review} autoSize={true}></TextArea>
+          </Form.Item>
+          <Form.Item
+            label='附件'
+            {...checkAssiLayout}
+          >
+            <Upload>
+              <Button icon={<UploadOutlined />}>上传</Button>
+            </Upload>
+          </Form.Item>
+          <Form.Item wrapperCol={{ span: 16, offset: 5 }}>
+            <Button type="primary" htmlType="submit">保存</Button>
           </Form.Item>
         </Form>
       </Modal>
@@ -187,6 +255,7 @@ TeacherContent.propTypes = {
   openRevisingAssignment:propTypes.func,
   closeRevisingAssignment:propTypes.func,
   removeAssignment:propTypes.func,
+  checkAssignment:propTypes.array,
 };
 
 TeacherContent.defaultProps = {
@@ -195,6 +264,7 @@ TeacherContent.defaultProps = {
   openRevisingAssignment: ()=>null,
   closeRevisingAssignment: ()=>null,
   removeAssignment: ()=>null,
+  checkAssignment:[]
 };
 
 

@@ -23,11 +23,9 @@ function TeacherHeader({teacherOrgs,full_name,addAssignment}) {
   const showModal = () => {
     setIsModalVisible(true);
   };
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
+  
 
-  const handleCancel = () => {
+  const handleCreateAssiCancel = () => {
     setIsModalVisible(false);
   };
 
@@ -64,9 +62,8 @@ function TeacherHeader({teacherOrgs,full_name,addAssignment}) {
       {/* 创建作业对话框 */}
       <Modal 
         visible={isModalVisible}
-        onOk={handleOk} 
-        onCancel={handleCancel}
-        destroyOnClose="true"
+        onCancel={handleCreateAssiCancel}
+        destroyOnClose={true}
         confirmLoading={confirmLoading}
         footer={false}
       >
