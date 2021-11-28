@@ -1,5 +1,5 @@
-import React from 'react';
-import { Table ,Button, Popconfirm, message} from 'antd';
+import React ,{useState} from 'react';
+import { Table,Modal,Select,Form ,Button, Popconfirm, message} from 'antd';
 import {connect} from  'react-redux';
 import {openRevisingAssignment,closeRevisingAssignment,removeAssignment} from '@/actions/teacher';
 import {api} from '@/utils/api';
@@ -15,6 +15,17 @@ function TeacherContent(props){
     openRevisingAssignment,
     closeRevisingAssignment
   } = props;
+
+  const {checkAssignment,setCheckAssignment} = useState(false);
+
+  const handleCheckAssignment = (record) => {
+    if(!!record){
+      setCheckAssignment(record);
+    }else{
+      setCheckAssignment(false)
+    }
+    
+  };
 
   const downloadHost = 'http://www.goven-zone.xyz:80/teacher/download';
 
@@ -128,7 +139,7 @@ function TeacherContent(props){
             <a href={`${downloadHost}?id=${record.id}&type=student&flag=ture`} target="_blank">
               <Button><DownloadOutlined />下载</Button>
             </a>
-            <Button type="primary" onClick="">
+            <Button type="primary" onClick={()=>handleCheckAssignment(record)}>
               <FormOutlined />
               批改
             </Button>
@@ -147,7 +158,15 @@ function TeacherContent(props){
           ?<Table columns={workColumns} dataSource={revisingAssignment.works} rowKey={(work => work.id)} />
           :null
       }
-      
+      <Modal
+        visible={!!checkAssignment}
+      >
+        <Form>
+          <Form.Item>
+
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   );  
 };
