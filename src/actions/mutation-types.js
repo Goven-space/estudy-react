@@ -13,3 +13,5 @@ export const ADD_ASSIGNMENT = 'ADD_ASSIGNMENT';
 export const GET_TOKEN = 'GET_TOKEN';
 
 export const LOGOUT = 'LOGOUT';
+
+export const UPDATE_REVIEW = 'UPDATE_REVIEW';

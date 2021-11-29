@@ -20,12 +20,14 @@ const mutations = {
       revisingAssignment: action.payload
     };
   },
+
   [types.CLOSE_REVISING_ASSIGNMENT](state,action){
     return {
       ...state,
       revisingAssignment: false
     };
   },
+  // 删除作业
   [types.REMOVE_ASSIGNMENT](state,action){
     const index = state.teacherAssignments.findIndex(assignment => assignment.assignment_id == action.payload);
     const newteacherAssignments = [...state.teacherAssignments];
@@ -35,6 +37,7 @@ const mutations = {
       teacherAssignments:[...newteacherAssignments]
     };
   },
+  // 创建作业
   [types.ADD_ASSIGNMENT](state,action){
     const org = state.teacherOrgs.find(org => org.id == action.payload.org_id);
     action.payload.student_count = org.student_count;
@@ -43,11 +46,26 @@ const mutations = {
       teacherAssignments:[action.payload,...state.teacherAssignments]
     };
   },
+  // 退出登录
   [types.LOGOUT](state){
     return {
       ...initialState
     };
   },
+  // 老师批改更新
+  [types.UPDATE_REVIEW](state,action){
+    const teacherAssignments = state.teacherAssignments;
+    // 需要修改的评价(精确到某个作业的某个学生)
+    const work = teacherAssignments[action.payload.assignment_index].works[action.payload.student_index];
+    
+    // 跟新作业中的两个属性
+    work[status] = action.payload.status;
+    work.teacher_review = action.payload.teacher_review;
+    return {
+      ...state, 
+      teacherAssignments
+    };
+  }
 };
 
 export default function(state=initialState,action){

@@ -1,7 +1,7 @@
 import React ,{useState} from 'react';
 import { Table,Modal,Select,Form,Input,Button, Popconfirm, message,Upload} from 'antd';
 import {connect} from  'react-redux';
-import {openRevisingAssignment,closeRevisingAssignment,removeAssignment} from '@/actions/teacher';
+import {openRevisingAssignment,closeRevisingAssignment,removeAssignment,updateReview} from '@/actions/teacher';
 import {api} from '@/utils/api';
 import propTypes from 'prop-types';
 import {DownloadOutlined,PlusSquareOutlined,MinusSquareOutlined,FormOutlined,UploadOutlined} from '@ant-design/icons';
@@ -21,40 +21,49 @@ function TeacherContent(props){
     teacherAssignments,
     revisingAssignment,
     openRevisingAssignment,
-    closeRevisingAssignment
+    closeRevisingAssignment,
+    updateReview
   } = props;
 
-  console.log(teacherAssignments);
-  const [checkAssignment,setCheckAssignment] = useState([]);
+
+  const [checkAssignment,setCheckAssignment] = useState({});
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   const baseHost = 'http://www.goven-zone.xyz:80';
   const downloadHost = baseHost + '/teacher/download';
   const reviewHost = baseHost + '/teacher/review';
 
   // 打开批改窗口
-  const handleCheckAssignment = (record) => {
-    setCheckAssignment(record);
+  const handleCheckAssignment = (record,index) => {    
+    setCheckAssignment({
+      ...record,
+      student_index:index
+    });
   };
 
   // 关闭批改窗口
   const handleCheckAssiCancel = () => {
-    setCheckAssignment([]);
+    setCheckAssignment({});
   };
     
   // 提交批改信息
   const submitCheckAssignment = (values) =>{
-    console.log(values);
+    setConfirmLoading(true);
     const checkForm = {
       id : checkAssignment.id,
       review:values.review,
       status:values.status
     };
-    console.log(checkForm);
     api.post(reviewHost,checkForm).then(data => {
-      console.log(data);
-      // Object.entries(data).forEach(item => this.$set(this.checkAssignment,item[0],item[1]));
+      const reviewData = {
+        ...data,
+        assignment_index:revisingAssignment.assignment_index,
+        student_index:checkAssignment.student_index
+      };
+      updateReview(reviewData);
     }).finally(() => {
-      // checkAssignment = [];
+      setConfirmLoading(false);
+      setCheckAssignment({});
     });
   };
 
@@ -104,7 +113,7 @@ function TeacherContent(props){
     {
       title: '操作',
       key:'control',
-      render: (text, record) => (
+      render: (text, record,index) => (
         <>
           {
             record.work_count<1
@@ -113,13 +122,13 @@ function TeacherContent(props){
                 onConfirm={()=>{delConfirm(record.assignment_id);}}
                 okText="Yes"
                 cancelText="No">
-                <Button>删除</Button>
+                <Button type="danger">删除</Button>
               </Popconfirm>
               :<>
                 {
                   !!revisingAssignment
                     ?(<Button type="primary" onClick={closeRevisingAssignment}><MinusSquareOutlined />收回</Button>)
-                    :<Button type="primary" onClick={()=>openRevisingAssignment(record)}><PlusSquareOutlined />展开</Button>
+                    :<Button type="primary" onClick={()=>openRevisingAssignment([record,index])}><PlusSquareOutlined />展开</Button>
                 }
                 <a href={`${downloadHost}All?id=${record.assignment_id}`}>
                   <Button><DownloadOutlined />下载全部</Button>
@@ -165,13 +174,13 @@ function TeacherContent(props){
     {
       title : '操作',
       key: 'work_control',
-      render(text,record){
+      render(text,record,index){
         return (
           <>
             <a href={`${downloadHost}?id=${record.id}&type=student&flag=ture`} target="_blank">
               <Button><DownloadOutlined />下载</Button>
             </a>
-            <Button type="primary" onClick={()=>handleCheckAssignment(record)}>
+            <Button type="primary" onClick={()=>handleCheckAssignment(record,index)}>
               <FormOutlined />
               批改
             </Button>
@@ -190,11 +199,13 @@ function TeacherContent(props){
           ?<Table columns={workColumns} dataSource={revisingAssignment.works} rowKey={(work => work.id)} />
           :null
       }
+      {/* 批改作业窗口 */}
       <Modal
-        visible={checkAssignment.length != 0}
+        visible={Object.keys(checkAssignment).length != 0}
         footer={false}
         onCancel={handleCheckAssiCancel}
         destroyOnClose={true}
+        confirmLoading={confirmLoading}
       >
         <Form onFinish={submitCheckAssignment}>
           <Form.Item 
@@ -246,12 +257,12 @@ const mapDispathToProps = (dispatch) => {
     openRevisingAssignment:(params)=>dispatch(openRevisingAssignment(params)),
     closeRevisingAssignment:()=>dispatch(closeRevisingAssignment()),
     removeAssignment:(params)=>dispatch(removeAssignment(params)),
+    updateReview:(params)=>dispatch(updateReview(params)),
   };
 };
 
 TeacherContent.propTypes = {
   teacherAssignments:propTypes.array,
-  revisingAssignment:propTypes.bool,
   openRevisingAssignment:propTypes.func,
   closeRevisingAssignment:propTypes.func,
   removeAssignment:propTypes.func,
@@ -260,7 +271,6 @@ TeacherContent.propTypes = {
 
 TeacherContent.defaultProps = {
   teacherAssignments:[],
-  revisingAssignment:false,
   openRevisingAssignment: ()=>null,
   closeRevisingAssignment: ()=>null,
   removeAssignment: ()=>null,

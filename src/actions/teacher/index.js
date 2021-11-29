@@ -10,7 +10,10 @@ export function updateTeacher(state){
 export function openRevisingAssignment(state){
   return {
     type:types.OPEN_REVISING_ASSIGNMENT,
-    payload:state
+    payload:{
+      ...state[0],
+      assignment_index:state[1]
+    }
   };
 };
 
@@ -33,3 +36,10 @@ export function addAssignment(state){
     payload:state
   };
 };
+
+export function updateReview(state){
+  return {
+    type : types.UPDATE_REVIEW,
+    payload : state
+  };
+}
