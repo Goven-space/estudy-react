@@ -4,12 +4,15 @@ import { Route, Switch ,Redirect ,BrowserRouter} from 'react-router-dom';
 import TeacherHeader from './components/teacher/Header';
 import TeacherContent from './components/teacher/Content';
 import StudentHeader from './components/student/Header';
+import StudentContent from './components/student/Content';
 import HeaderCommon from './components/Common.jsx';
 import Authorization from './components/Authorization';
 import { connect } from 'react-redux';
 import {updateTeacher} from '@/actions/teacher';
+import {updataStudent} from '@/actions/student';
 import {getToken,logout} from '@/actions/authorization';
 import {api} from '@/utils/api';
+import propTypes from 'prop-types';
 
 
 const { Header, Content } = Layout;
@@ -21,24 +24,28 @@ class App extends Component{
     this.checkedLogin();
   };
   loadDetails = () => {
-    const {isTeacher,updateTeacher} = this.props;
+    const {isTeacher,updateTeacher,updataStudent} = this.props;
     if (isTeacher==='teacher') {
       api.get('/teacher/detail').then(data => {
         updateTeacher(data);
       });
     } else {
-      
+      api.get('/student/detail').then(data => {
+        updataStudent(data);
+      });
     }
   };
   checkedLogin = () => {
     const {token,getToken,logout} = this.props;
-    api.defaults.headers.common['Token'] = token;
-    api.post('/auth/refreshToken',{},{headers:{_slient:true}}).then(result =>{
-      getToken(result);
-      this.loadDetails();
-    }).catch(err => {
-      logout();
-    });
+    if(!!token){
+      api.defaults.headers.common['Token'] = token;
+      api.post('/auth/refreshToken',{},{headers:{_slient:true}}).then(result =>{
+        getToken(result);
+        this.loadDetails();
+      }).catch(err => {
+        logout();
+      });
+    }
   };
 
   render(){
@@ -54,9 +61,10 @@ class App extends Component{
               <Route path="/:limit" component={HeaderCommon}/>
             </div>
           </Header>
-          <Content>
+          <Content className="Content">
             <Switch>
-              <Route path="/teacher"component={TeacherContent} />
+              <Route path="/teacher" component={TeacherContent} />
+              <Route path="/student" component={StudentContent} />
               <Route path="/" component={Authorization} />
             </Switch>
             {loggedIn?<Redirect to={`/${isTeacher}`} />:<Redirect to='/' />}
@@ -77,9 +85,30 @@ const mapStateToProps = ({AuthorizationReducer}) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateTeacher: (params) => dispatch(updateTeacher(params)),
+    updataStudent: (params) => dispatch(updataStudent(params)),
     getToken: (params) => dispatch(getToken(params)),
     logout: () => dispatch(logout()),
   };
 };
 
 export default connect(mapStateToProps,mapDispatchToProps)(App);
+
+App.propTypes = {
+  loggedIn:propTypes.bool,
+  isTeacher:propTypes.string,
+  token:propTypes.string,
+  updateTeacher:propTypes.func,
+  updataStudent:propTypes.func,
+  getToken:propTypes.func,
+  logout:propTypes.func
+};
+
+App.defaultProps = {
+  loggedIn:false,
+  isisTeacher:'',
+  token:'',
+  updateTeacher:()=>null,
+  updataStudent:()=>null,
+  getToken:()=>null,
+  logout:()=>null,
+};

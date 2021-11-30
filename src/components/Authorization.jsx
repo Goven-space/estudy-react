@@ -4,23 +4,20 @@ import {UserOutlined,LockOutlined} from '@ant-design/icons';
 import {connect} from 'react-redux';
 import {login} from '@/actions/authorization';
 import {updateTeacher} from '@/actions/teacher';
+import {updataStudent} from '@/actions/student';
 import propTypes from 'prop-types';
 import {api} from '@/utils/api';
 
-// 将redux绑定到组件的props上
-export default connect((state)=>{
-  return {
-    loggedIn:state.AuthorizationReducer.loggedIn,
-  };
-},(dispatch)=>{
-  return {
-    login: (params)=>dispatch(login(params)),
-    updateTeacher: (params) => dispatch(updateTeacher(params))
-  };
-})(Authorization);
 
 // 组件Authorization
-function Authorization({login,updateTeacher}) {
+function Authorization(props) {
+  // 定义redux绑定的数据、事件
+  const {
+    login,
+    loggedIn,
+    updateTeacher,
+    updataStudent
+  } = props;
 
   const [form] = Form.useForm();
 
@@ -34,10 +31,15 @@ function Authorization({login,updateTeacher}) {
     }).catch(error=>{
       const errorMsg = error.response.data.msg;
       message.error(errorMsg);
+      return Promise.reject();
     }).then((result)=>{
       if(result ===1){
         api.get('/teacher/detail').then(data => {
           updateTeacher(data);
+        });
+      }else{
+        api.get('/student/detail').then(data => {
+          updataStudent(data);
         });
       }
     });
@@ -92,15 +94,33 @@ function Authorization({login,updateTeacher}) {
   );
 }
 
+const mapStateToProps = (state)=>{
+  return {
+    loggedIn:state.AuthorizationReducer.loggedIn,
+  };
+};
+
+const mapDispatchToProps = (dispatch)=>{
+  return {
+    login: (params)=>dispatch(login(params)),
+    updateTeacher: (params) => dispatch(updateTeacher(params)),
+    updataStudent: (params) => dispatch(updataStudent(params)),
+  };
+};
+
+// 将redux绑定到组件的props上
+export default connect(mapStateToProps,mapDispatchToProps)(Authorization);
 
 Authorization.propTypes = {
   loggedIn:propTypes.bool,
   login:propTypes.func,
-  updateTeacher:propTypes.func
+  updateTeacher:propTypes.func,
+  updataStudent:propTypes.func
 };
 
 Authorization.defaultProps = {
   loggedIn:false,
   login:() => null,
-  updateTeacher:() =>null
+  updateTeacher:() =>null,
+  updataStudent:() =>null,
 };

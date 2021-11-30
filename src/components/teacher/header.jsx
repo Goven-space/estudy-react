@@ -16,10 +16,13 @@ const formItemLayout = {
 
 
 function TeacherHeader({teacherOrgs,full_name,addAssignment}) {
+  
   const [form] = Form.useForm();
 
   const [isModalVisible, setIsModalVisible] = useState(false);//作业创建窗口开关
   const [confirmLoading, setConfirmLoading] = React.useState(false);//异步延迟关闭创建窗口
+
+  // 
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -106,17 +109,6 @@ function TeacherHeader({teacherOrgs,full_name,addAssignment}) {
   );
 };
 
-TeacherHeader.propTypes = {
-  teacherOrgs:propTypes.array,
-  addAssignment:propTypes.func,
-};
-
-TeacherHeader.defaultProps = {
-  teacherOrgs:[],
-  addAssignment: ()=>null
-};
-
-
 
 const mapStateToProps = (state) => {
   return {
@@ -132,3 +124,19 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(mapStateToProps,mapDispatchToProps)(TeacherHeader);
+
+TeacherHeader.propTypes = {
+  full_name:propTypes.string,
+  teacherOrgs:propTypes.array,
+  addAssignment:propTypes.func,
+  isModalVisible:propTypes.bool,
+  confirmLoading:propTypes.bool,
+};
+
+TeacherHeader.defaultProps = {
+  full_name:'',
+  teacherOrgs:[],
+  addAssignment: ()=>null,
+  isModalVisible:false,
+  confirmLoading:false,
+};

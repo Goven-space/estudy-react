@@ -3,7 +3,6 @@ import * as types from '@/actions/mutation-types';
 const initialState = {
   teacherAssignments : [],
   teacherOrgs :[],
-  revisingAssignment:false,
 };
 
 const mutations = {
@@ -14,19 +13,7 @@ const mutations = {
       teacherOrgs:action.payload.orgs
     };
   },
-  [types.OPEN_REVISING_ASSIGNMENT](state,action){
-    return {
-      ...state,
-      revisingAssignment: action.payload
-    };
-  },
 
-  [types.CLOSE_REVISING_ASSIGNMENT](state,action){
-    return {
-      ...state,
-      revisingAssignment: false
-    };
-  },
   // 删除作业
   [types.REMOVE_ASSIGNMENT](state,action){
     const index = state.teacherAssignments.findIndex(assignment => assignment.assignment_id == action.payload);
@@ -37,6 +24,7 @@ const mutations = {
       teacherAssignments:[...newteacherAssignments]
     };
   },
+  
   // 创建作业
   [types.ADD_ASSIGNMENT](state,action){
     const org = state.teacherOrgs.find(org => org.id == action.payload.org_id);

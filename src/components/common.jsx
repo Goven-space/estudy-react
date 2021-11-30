@@ -3,16 +3,17 @@ import { Button} from 'antd';
 import { HomeOutlined, LogoutOutlined } from '@ant-design/icons';
 import {logout} from '@/actions/authorization';
 import {connect} from 'react-redux';
+import porpTypes from 'prop-types';
 
 function HeaderCommon({logout}) {
   return (
     <>
-      <a className="vcenter" href="https://github.com/Goven-space" target="_blank">
-        <Button>
+      <Button  className="vcenter">
+        <a href="https://github.com/Goven-space" target="_blank">
           <HomeOutlined />
           代码仓库
-        </Button>
-      </a>
+        </a>
+      </Button>
       <Button className="vcenter" onClick={logout}>
         <LogoutOutlined />
         退出
@@ -28,3 +29,11 @@ const mapDispatchToPorps = (dispatch) => {
 };
 
 export default connect(null,mapDispatchToPorps)(HeaderCommon);
+
+HeaderCommon.propTypes = {
+  logout:porpTypes.func
+};
+
+HeaderCommon.defaultProps = {
+  logout:()=> null,
+};

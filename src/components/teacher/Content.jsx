@@ -16,22 +16,40 @@ const checkAssiLayout = {
   wrapperCol:{ span: 16 }
 };
 
+// 作业状态
+const work_status = [
+  '待批改',
+  '需完善',
+  '已完成'
+];
+
+const baseHost = 'http://www.goven-zone.xyz:80';
+const downloadHost = baseHost + '/teacher/download';
+const reviewHost = baseHost + '/teacher/review';
+
+
 function TeacherContent(props){
   const {
-    teacherAssignments,
-    revisingAssignment,
-    openRevisingAssignment,
-    closeRevisingAssignment,
-    updateReview
+    teacherAssignments,//全部作业数据
+    updateReview//更新作业批改信息事件
   } = props;
 
+  const [revisingAssignment,setRevisingAssignment] = useState({});//展开收回已提交作业学生表单变量
+  const [checkAssignment,setCheckAssignment] = useState({});//批改窗口显示隐藏变量
+  const [confirmLoading, setConfirmLoading] = useState(false);//批改窗口延时关闭变量
 
-  const [checkAssignment,setCheckAssignment] = useState({});
-  const [confirmLoading, setConfirmLoading] = useState(false);
-
-  const baseHost = 'http://www.goven-zone.xyz:80';
-  const downloadHost = baseHost + '/teacher/download';
-  const reviewHost = baseHost + '/teacher/review';
+  
+  // 展开收回已提交作业学生表单事件
+  const handleRevisingAssignment = (record,index) => {
+    if(!!record){
+      setRevisingAssignment({
+        ...record,
+        assignment_index:index//作业序号
+      });
+    }else{
+      setRevisingAssignment({});//收回表单
+    };
+  };
 
   // 打开批改窗口
   const handleCheckAssignment = (record,index) => {    
@@ -66,16 +84,7 @@ function TeacherContent(props){
       setCheckAssignment({});
     });
   };
-
   
-  
-
-  const work_status = [
-    '待批改',
-    '需完善',
-    '已完成'
-  ];
-
   // 删除作业函数
   const delConfirm = (id) => {
     const {removeAssignment} = props;
@@ -126,9 +135,9 @@ function TeacherContent(props){
               </Popconfirm>
               :<>
                 {
-                  !!revisingAssignment
-                    ?(<Button type="primary" onClick={closeRevisingAssignment}><MinusSquareOutlined />收回</Button>)
-                    :<Button type="primary" onClick={()=>openRevisingAssignment([record,index])}><PlusSquareOutlined />展开</Button>
+                  Object.keys(revisingAssignment).length!=0
+                    ?(<Button type="primary" onClick={()=>handleRevisingAssignment()}><MinusSquareOutlined />收回</Button>)
+                    :<Button type="primary" onClick={()=>handleRevisingAssignment(record,index)}><PlusSquareOutlined />展开</Button>
                 }
                 <a href={`${downloadHost}All?id=${record.assignment_id}`}>
                   <Button><DownloadOutlined />下载全部</Button>
@@ -137,7 +146,7 @@ function TeacherContent(props){
           }
         </>
       ),
-      filteredValue:revisingAssignment ? [revisingAssignment.assignment_id] : null,
+      filteredValue:Object.keys(revisingAssignment).length!=0 ? [revisingAssignment.assignment_id] : null,
       onFilter(value,record){
         return value == record.assignment_id;
       }
@@ -195,7 +204,7 @@ function TeacherContent(props){
     <>
       <Table columns={columns} dataSource={teacherAssignments} rowKey={(record => record.assignment_id)} pagination={false}/>
       {
-        !!revisingAssignment
+        Object.keys(revisingAssignment).length!=0
           ?<Table columns={workColumns} dataSource={revisingAssignment.works} rowKey={(work => work.id)} />
           :null
       }
@@ -254,28 +263,28 @@ const mapStateToProps  = (state) =>  state.TeacherReducer;
 
 const mapDispathToProps = (dispatch) => {
   return {
-    openRevisingAssignment:(params)=>dispatch(openRevisingAssignment(params)),
-    closeRevisingAssignment:()=>dispatch(closeRevisingAssignment()),
     removeAssignment:(params)=>dispatch(removeAssignment(params)),
     updateReview:(params)=>dispatch(updateReview(params)),
   };
 };
 
+
+export default connect(mapStateToProps,mapDispathToProps)(TeacherContent);
+
 TeacherContent.propTypes = {
   teacherAssignments:propTypes.array,
-  openRevisingAssignment:propTypes.func,
-  closeRevisingAssignment:propTypes.func,
+  teacherOrgs:propTypes.array,
+  revisingAssignment:PropTypes.object,
   removeAssignment:propTypes.func,
-  checkAssignment:propTypes.array,
+  checkAssignment:PropTypes.object,
+  confirmLoading:propTypes.bool,
 };
 
 TeacherContent.defaultProps = {
   teacherAssignments:[],
-  openRevisingAssignment: ()=>null,
-  closeRevisingAssignment: ()=>null,
+  teacherOrgs:[],
+  revisingAssignment:{},
   removeAssignment: ()=>null,
-  checkAssignment:[]
+  checkAssignment:{},
+  confirmLoading:false
 };
-
-
-export default connect(mapStateToProps,mapDispathToProps)(TeacherContent);

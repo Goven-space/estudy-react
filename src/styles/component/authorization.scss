@@ -1,5 +1,6 @@
 .authorization {
   display: flex;
+  margin-top:20px;
   justify-content: center;
 }
 form {
@@ -10,13 +11,4 @@ form {
   button {
     width: 100%;
   }
-}
-.icon {
-  color: rgba(0, 0, 0, 0.25);
-}
-.error {
-  border: 1px solid red;
-}
-.error-tip {
-  color: red;
 }
