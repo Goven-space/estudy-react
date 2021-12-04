@@ -274,9 +274,9 @@ export default connect(mapStateToProps,mapDispathToProps)(TeacherContent);
 TeacherContent.propTypes = {
   teacherAssignments:propTypes.array,
   teacherOrgs:propTypes.array,
-  revisingAssignment:PropTypes.object,
+  revisingAssignment:propTypes.object,
   removeAssignment:propTypes.func,
-  checkAssignment:PropTypes.object,
+  checkAssignment:propTypes.object,
   confirmLoading:propTypes.bool,
 };
 

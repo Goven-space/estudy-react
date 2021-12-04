@@ -9,6 +9,7 @@ const initialState = {
 
 const mutations = {
   [types.UPDATE_STUDENT](state,action){
+    console.log(action.payload);
     return {
       ...state,
       studentOrgs:action.payload.orgs,

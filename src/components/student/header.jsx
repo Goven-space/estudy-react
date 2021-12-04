@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import propTypes from 'prop-types';
 
 function StudentHeader(props){
 
@@ -14,17 +15,17 @@ function StudentHeader(props){
   return  (       
     <div className="flexrow">
       <h3 className="flexcol">
-        <span>{full_name}</span>
-        <span>学号:{name}</span>
+        <span class="user_info">{full_name}</span>
+        <span class="user_info">学号:{name}</span>
       </h3>
       <h4 className="flexcol">
         {
           studentOrgs.map((org,index) => {
-            return <span key={`${org}_${index}`}>{org}</span>;
+            return <span class="user_info" key={`${org}_${index}`}>{org}</span>;
           })
         }
       </h4>
-      <div className="header-stats">
+      <div className="user_info">
         <span className="label">{stats.uncommitted}个作业待提交</span>
         <span className="label">{stats.revising}个作业待批改</span>
         <span className="label">{stats.improvable}个作业需完善</span>

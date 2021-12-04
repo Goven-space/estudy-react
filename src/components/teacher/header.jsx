@@ -34,6 +34,7 @@ function TeacherHeader({teacherOrgs,full_name,addAssignment}) {
 
   //创建作业表单提交
   const createAssignment = (values) => {
+    setConfirmLoading(true);
     api.post('/teacher/createAssignment',
       {org_id:values.org_id,
         name:values.name,
@@ -43,7 +44,9 @@ function TeacherHeader({teacherOrgs,full_name,addAssignment}) {
     ).then(data => {
       addAssignment(data);
       message.success('添加成功');
+      setConfirmLoading(false);
       setIsModalVisible(false);
+      
     });
   };
   // ===================================
@@ -51,7 +54,7 @@ function TeacherHeader({teacherOrgs,full_name,addAssignment}) {
     <>
       <div className="flexrow">
         <h3>
-          <span>{full_name}</span>
+          <span class="user_info">{full_name}</span>
         </h3>
         <Button
           className="vcenter"

@@ -1,19 +1,21 @@
-import React, { Component } from 'react';
+import React, { Component ,Suspense,lazy } from 'react';
 import { Layout } from 'antd';
 import { Route, Switch ,Redirect ,BrowserRouter} from 'react-router-dom';
-import TeacherHeader from './components/teacher/Header';
-import TeacherContent from './components/teacher/Content';
-import StudentHeader from './components/student/Header';
-import StudentContent from './components/student/Content';
-import HeaderCommon from './components/Common.jsx';
-import Authorization from './components/Authorization';
 import { connect } from 'react-redux';
 import {updateTeacher} from '@/actions/teacher';
 import {updataStudent} from '@/actions/student';
 import {getToken,logout} from '@/actions/authorization';
 import {api} from '@/utils/api';
 import propTypes from 'prop-types';
+// import {asyncComponent} from './utils/asyncComponent';
 
+// 路由懒加载
+let Authorization = lazy(() => import('./components/Authorization'));
+let TeacherContent = lazy(() =>  import('./components/teacher/Content'));
+let StudentContent = lazy(() =>  import('./components/student/Content'));
+let TeacherHeader = lazy(() =>  import('./components/teacher/Header')) ;
+let StudentHeader = lazy(() =>  import('./components/student/Header'));
+let HeaderCommon = lazy(() =>  import('./components/Common.jsx'));
 
 const { Header, Content } = Layout;
 
@@ -36,16 +38,20 @@ class App extends Component{
     }
   };
   checkedLogin = () => {
-    const {token,getToken,logout} = this.props;
-    if(!!token){
+    const {token,getToken,loggedIn,logout} = this.props; 
+    if(loggedIn){
       api.defaults.headers.common['Token'] = token;
       api.post('/auth/refreshToken',{},{headers:{_slient:true}}).then(result =>{
-        getToken(result);
-        this.loadDetails();
+        if(!!result){
+          getToken(result);
+          this.loadDetails();
+        }else{
+          logout();
+        }
       }).catch(err => {
         logout();
       });
-    }
+    }  
   };
 
   render(){
@@ -56,18 +62,22 @@ class App extends Component{
           <Header className="header flexrow">
             <h2>eStudy</h2>
             <div className="right flexrow" >
-              <Route path="/teacher" component={TeacherHeader}/>
-              <Route path="/student" component={StudentHeader}/>
-              <Route path="/:limit" component={HeaderCommon}/>
+              <Suspense fallback={<div>Loading...</div>}>
+                <Route path="/teacher" component={TeacherHeader}/>
+                <Route path="/student" component={StudentHeader}/>
+                <Route path="/:limit" component={HeaderCommon}/>
+              </Suspense>
             </div>
           </Header>
           <Content className="Content">
-            <Switch>
-              <Route path="/teacher" component={TeacherContent} />
-              <Route path="/student" component={StudentContent} />
-              <Route path="/" component={Authorization} />
-            </Switch>
-            {loggedIn?<Redirect to={`/${isTeacher}`} />:<Redirect to='/' />}
+            <Suspense fallback={<div>Loading...</div>}>
+              <Switch>
+                <Route path="/teacher" component={TeacherContent} />
+                <Route path="/student" component={StudentContent} />
+                <Route path="/" component={Authorization} />
+              </Switch>
+            </Suspense>
+            {loggedIn?<Redirect to={`/${isTeacher}`} />:<Redirect to='/estudy-react' />}
           </Content>  
         </Layout>
       </BrowserRouter>

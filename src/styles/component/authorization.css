@@ -8,7 +8,7 @@ form {
 }
 .filed {
   margin: 20px;
-  button {
-    width: 100%;
-  }
+}
+.filed button {
+  width: 100%;
 }

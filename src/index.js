@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './styles/index.scss';
+import './styles/index.css';
 import 'antd/dist/antd.css';
 import App from './App';
 import {Provider} from 'react-redux';
@@ -12,12 +12,11 @@ import moment from 'moment';
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
 import {ConfigProvider} from 'antd';
-// import reportWebVitals from './reportWebVitals';
 
 moment.locale('zh-cn');
 // 中文
 
-const { persistor, store } = configureStore();
+const { persistor, store } = configureStore();//redux数据持久化
 
 ReactDOM.render(
   <Provider store={store}>
