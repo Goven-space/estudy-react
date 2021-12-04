@@ -157,6 +157,7 @@
     ]
   },
   "devDependencies": {
+    "compression-webpack-plugin": "^5.0.2",
     "customize-cra": "^1.0.0",
     "eslint-import-resolver-webpack": "^0.13.2",
     "eslint-plugin-import": "^2.25.3",
